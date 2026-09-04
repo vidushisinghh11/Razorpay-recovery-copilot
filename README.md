@@ -1,4 +1,4 @@
-# Recovery Copilot 💸
+# Recovery Copilot 
 AI agent that detects failed payments, diagnoses root cause, and executes bounded recovery actions.
 
 ## Problem
