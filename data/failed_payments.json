@@ -1,0 +1,14 @@
+[
+  {"id": "pay_001", "amount": 2499, "method": "card", "reason_code": "insufficient_funds", "customer": "cust_101", "timestamp": "2026-09-04T09:12:00Z"},
+  {"id": "pay_002", "amount": 899, "method": "upi", "reason_code": "bank_timeout", "customer": "cust_102", "timestamp": "2026-09-04T09:15:00Z"},
+  {"id": "pay_003", "amount": 4999, "method": "card", "reason_code": "card_expired", "customer": "cust_103", "timestamp": "2026-09-04T09:20:00Z"},
+  {"id": "pay_004", "amount": 1299, "method": "card", "reason_code": "checkout_dropoff", "customer": "cust_104", "timestamp": "2026-09-04T09:25:00Z"},
+  {"id": "pay_005", "amount": 7999, "method": "card", "reason_code": "insufficient_funds", "customer": "cust_105", "timestamp": "2026-09-04T09:30:00Z"},
+  {"id": "pay_006", "amount": 599, "method": "upi", "reason_code": "bank_timeout", "customer": "cust_106", "timestamp": "2026-09-04T09:33:00Z"},
+  {"id": "pay_007", "amount": 3499, "method": "card", "reason_code": "repeat_failure", "customer": "cust_101", "timestamp": "2026-09-04T09:40:00Z"},
+  {"id": "pay_008", "amount": 1999, "method": "netbanking", "reason_code": "bank_timeout", "customer": "cust_107", "timestamp": "2026-09-04T09:45:00Z"},
+  {"id": "pay_009", "amount": 5499, "method": "card", "reason_code": "card_expired", "customer": "cust_108", "timestamp": "2026-09-04T09:50:00Z"},
+  {"id": "pay_010", "amount": 999, "method": "upi", "reason_code": "checkout_dropoff", "customer": "cust_109", "timestamp": "2026-09-04T09:55:00Z"},
+  {"id": "pay_011", "amount": 12999, "method": "card", "reason_code": "repeat_failure", "customer": "cust_101", "timestamp": "2026-09-04T10:00:00Z"},
+  {"id": "pay_012", "amount": 2999, "method": "card", "reason_code": "unknown_error", "customer": "cust_110", "timestamp": "2026-09-04T10:05:00Z"}
+]

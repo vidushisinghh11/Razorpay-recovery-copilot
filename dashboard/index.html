@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Recovery Copilot Dashboard</title>
+<style>
+  body { font-family: -apple-system, sans-serif; background: #0d0d0d; color: #eee; margin: 0; padding: 30px; }
+  h1 { color: #f2c078; margin-bottom: 4px; }
+  .subtitle { color: #888; margin-bottom: 24px; }
+  .stats { display: flex; gap: 20px; margin-bottom: 24px; }
+  .card { background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 20px; flex: 1; transition: all 0.3s; }
+  .card .label { color: #999; font-size: 12px; text-transform: uppercase; }
+  .card .value { font-size: 28px; font-weight: bold; margin-top: 8px; color: #fff; }
+  #runBtn { background: #f2c078; color: #0d0d0d; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; margin-bottom: 24px; }
+  #runBtn:hover { background: #ffd28f; }
+  #runBtn:disabled { background: #555; color: #999; cursor: not-allowed; }
+  table { width: 100%; border-collapse: collapse; background: #1a1a1a; border-radius: 10px; overflow: hidden; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #2a2a2a; font-size: 14px; }
+  th { color: #f2c078; text-transform: uppercase; font-size: 11px; }
+  .status-recovered { color: #7ee787; }
+  .status-pending { color: #f2c078; }
+  .status-failed, .status-escalated { color: #ff7b72; }
+  .reason { color: #888; font-size: 12px; }
+  tr.new-row { animation: slideIn 0.4s ease-out; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); background: #2a2410; }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .pulse { animation: pulse 0.5s ease; }
+  @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); color: #f2c078; } 100% { transform: scale(1); } }
+  #liveTag { display: none; color: #7ee787; font-size: 12px; margin-left: 12px; }
+  #liveTag.active { display: inline; }
+  #liveTag::before { content: "●"; margin-right: 4px; animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.2; } }
+</style>
+</head>
+<body>
+  <h1>Recovery Copilot <span id="liveTag">LIVE</span></h1>
+  <div class="subtitle">Detects failed payments &rarr; diagnoses root cause &rarr; executes bounded recovery action</div>
+
+  <button id="runBtn" onclick="runSimulation()">▶ Run Recovery Agent</button>
+
+  <div class="stats">
+    <div class="card"><div class="label">At Risk</div><div class="value" id="atRisk">Rs. 0</div></div>
+    <div class="card"><div class="label">Recovered</div><div class="value" id="recovered">Rs. 0</div></div>
+    <div class="card"><div class="label">Recovery Rate</div><div class="value" id="rate">0%</div></div>
+    <div class="card"><div class="label">Cases Processed</div><div class="value" id="processed">0 / 0</div></div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Payment</th><th>Amount</th><th>Reason</th><th>Action</th><th>Status</th><th>Reasoning</th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+let allCases = [];
+
+async function loadData() {
+  const res = await fetch('results.json');
+  const data = await res.json();
+  allCases = data.cases;
+  document.getElementById('processed').textContent = '0 / ' + allCases.length;
+}
+
+function bump(el) {
+  el.classList.remove('pulse');
+  void el.offsetWidth; // restart animation
+  el.classList.add('pulse');
+}
+
+async function runSimulation() {
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  btn.textContent = 'Running...';
+  document.getElementById('liveTag').classList.add('active');
+  document.getElementById('rows').innerHTML = '';
+
+  let atRisk = 0, recoveredAmt = 0, recoveredCount = 0;
+
+  for (let i = 0; i < allCases.length; i++) {
+    const c = allCases[i];
+    await new Promise(r => setTimeout(r, 550)); // simulate processing delay
+
+    atRisk += c.amount;
+    if (c.status === 'recovered') { recoveredAmt += c.amount; recoveredCount++; }
+
+    const atRiskEl = document.getElementById('atRisk');
+    const recEl = document.getElementById('recovered');
+    const rateEl = document.getElementById('rate');
+    const procEl = document.getElementById('processed');
+
+    atRiskEl.textContent = 'Rs. ' + atRisk;
+    recEl.textContent = 'Rs. ' + recoveredAmt;
+    rateEl.textContent = Math.round((recoveredCount / (i + 1)) * 100) + '%';
+    procEl.textContent = (i + 1) + ' / ' + allCases.length;
+    bump(atRiskEl); bump(recEl); bump(rateEl); bump(procEl);
+
+    const row = document.createElement('tr');
+    row.className = 'new-row';
+    row.innerHTML =
+      '<td>' + c.id + '</td>' +
+      '<td>Rs. ' + c.amount + '</td>' +
+      '<td>' + c.reason_code + '</td>' +
+      '<td>' + c.action + '</td>' +
+      '<td class="status-' + c.status + '">' + c.status + '</td>' +
+      '<td class="reason">' + c.reasoning + (c.note ? ' - ' + c.note : '') + '</td>';
+    document.getElementById('rows').prepend(row);
+  }
+
+  document.getElementById('liveTag').classList.remove('active');
+  btn.disabled = false;
+  btn.textContent = '↻ Run Again';
+}
+
+loadData();
+</script>
+</body>
+</html>
